@@ -124,7 +124,10 @@ def httppost(conn, where, params):
     return response.read()
 
 
-def __check_GT(gt):
+def __check_GT(gt, config_file=None):
+    if config_file:
+        __conf = __loadConfig(config_file)
+        __loaded_conf = makeTweak(__conf.process).jsondictionary()
     if not gt.endswith("::All"):
         print "It seemslike the name of the GT '%s' has a typo in it, missing the final ::All which will crash your job. If insted you're using CondDBv2, you're fine." %gt
 
