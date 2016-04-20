@@ -191,7 +191,12 @@ def isAtSite(ds, run):
 def isCMSSWBeforeEight( theRelease ):
   if theRelease == None :
     raise ValueError('theRelease is set to %s and yet, it seems to be required. ERRROR.' % (theRelease))
-  return (int( theRelease.split("_")[1] ) < 8) or ((int( theRelease.split("_")[2] ) < 1) and (int( theRelease.split("_")[3] ) < 1))
+  if (int(theRelease.split("_")[1] < 8) :
+    return True
+  elif (int(theRelease.split("_")[1] == 8) :
+    return ((int( theRelease.split("_")[2] ) < 1) and (int( theRelease.split("_")[3] ) < 1))
+  else :
+    return False
 
 def getCMSSWReleaseFromPath( thePath ):
   path_list = thePath.split('/')
