@@ -718,7 +718,7 @@ if __name__ == "__main__":
   substring = ".couchID"
   for object in newlist:
     if substring in object:
-      raise ValueError("couchID file exists, please remove it");
+      raise ValueError("Please remove this file : %s"%object);
   
   # Get the options
   options = createOptionParser()
