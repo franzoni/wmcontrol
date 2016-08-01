@@ -422,7 +422,7 @@ def createCMSSWConfigs(options,confCondDictionary,allRunsAndBlocks):
     cmssw_command = "cd %s; eval `scramv1 runtime -sh`; cd -"%options.hltCmsswDir
     upload_command = "wmupload.py -u %s -g PPD -l %s %s"% (os.getenv('USER'),cfgname,cfgname)
     execme(cmssw_command + '; ' + driver_command + '; ' + upload_command)
-    
+
     base=None
     if 'base' in details:
       base=details['base']
@@ -440,6 +440,7 @@ def createCMSSWConfigs(options,confCondDictionary,allRunsAndBlocks):
       
     recodqm = None
     if 'recodqm' in details:
+      label=cfgname.lower().replace('.py','')[0:5]
       recodqm=details['recodqm']
       driver_command="cmsDriver.py %s " %details['reqtype']+\
                       "-s %s " %recodqm['steps'] +\
@@ -482,18 +483,17 @@ def createCMSSWConfigs(options,confCondDictionary,allRunsAndBlocks):
                       "--filetype DQM " +\
                       "--conditions %s "%options.basegt +\
                       "--filein=file:%s "%filein +\
-                      "--python_filename=step4_HARVESTING.py " +\
+                      "--python_filename=step4_%s_HARVESTING.py "%label +\
                       "--no_exec " +\
                       "-n 100 "
                       
       if options.recoCmsswDir:
         cmssw_command = "cd %s; eval `scramv1 runtime -sh`; cd -"%options.recoCmsswDir
-        upload_command = "wmupload.py -u %s -g PPD -l %s %s"% (os.getenv('USER'),'step4_HARVESTING.py','step4_HARVESTING.py')
+        upload_command = "wmupload.py -u %s -g PPD -l %s %s"% (os.getenv('USER'),'step4_%s_HARVESTING.py'%label,'step4_%s_HARVESTING.py'%label)
         execme(cmssw_command + '; ' + driver_command + '; ' + upload_command)
       else:
         execme(driver_command)
-    else:      
-      label=cfgname.lower().replace('.py','')  
+    else:
       if options.Type.find("ALCA")!=-1:
           filein = "%s_RAW2DIGI_L1Reco_RECO_ALCA_DQM_inDQM.root"%details['reqtype']
       else:
@@ -590,7 +590,8 @@ def createCMSSWConfigs(options,confCondDictionary,allRunsAndBlocks):
                    'cfg_path = REFERENCE.py\n' +\
                    'req_name = %s_reference_RelVal_%s\n'%(details['reqtype'],options.run[0]) +\
                    'globaltag = %s\n'%(refgtshort) +\
-                   'harvest_cfg=step4_reference_HARVESTING.py\n\n'
+                   #'harvest_cfg=step4_reference_HARVESTING.py\n\n'
+                   'harvest_cfg=step4_%s_HARVESTING.py\n\n'%label
 
   task=2
   print confCondList
@@ -605,7 +606,7 @@ def createCMSSWConfigs(options,confCondDictionary,allRunsAndBlocks):
         task+=1
         continue
       elif recodqm:
-        label=cfgname.lower().replace('.py','')[0:3]
+        label=cfgname.lower().replace('.py','')[0:5]
         wmcconf_text+='\n\n[%s_%s]\n' %(details['reqtype'],label) +\
                        'keep_step%d = True\n'%task +\
                        'time_event = 1\n' +\
@@ -624,7 +625,7 @@ def createCMSSWConfigs(options,confCondDictionary,allRunsAndBlocks):
                        'step%d_timeevent = 10\n'%task
         if options.recoRelease:
           wmcconf_text+='step%d_release = %s \n'%(task,options.recoRelease)
-        wmcconf_text+='harvest_cfg=step4_HARVESTING.py\n\n'
+        wmcconf_text+='harvest_cfg=step4_%s_HARVESTING.py\n\n'%label
       else:
         continue
 
@@ -637,7 +638,7 @@ def createCMSSWConfigs(options,confCondDictionary,allRunsAndBlocks):
       task+=1
     elif recodqm:
       if "REFERENCE" in cfgname: continue
-      label=cfgname.lower().replace('.py','')[0:7]
+      label=cfgname.lower().replace('.py','')[0:5]
       wmcconf_text+='\n\n[%s_%s]\n' %(details['reqtype'],label) +\
                      'keep_step%d = True\n'%task +\
                      'time_event = 1\n' +\
@@ -656,9 +657,9 @@ def createCMSSWConfigs(options,confCondDictionary,allRunsAndBlocks):
                      'step%d_timeevent = 10\n'%task
       if options.recoRelease:
         wmcconf_text+='step%d_release = %s \n'%(task,options.recoRelease)
-      wmcconf_text+='harvest_cfg=step4_HARVESTING.py\n\n'
+      wmcconf_text+='harvest_cfg=step4_%s_HARVESTING.py\n\n'%label
     else:
-      label=cfgname.lower().replace('.py','')[0:7]
+      label=cfgname.lower().replace('.py','')[0:5]
       wmcconf_text+='\n\n[%s_%s]\n' %(details['reqtype'],label) +\
                      'keep_step1 = True\n' +\
                      'time_event = 10\n' +\
