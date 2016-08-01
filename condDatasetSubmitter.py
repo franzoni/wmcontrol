@@ -437,10 +437,10 @@ def createCMSSWConfigs(options,confCondDictionary,allRunsAndBlocks):
                       "--no_exec " +\
                       "-n 100 "
       execme(driver_command)
-      
+
+    label=cfgname.lower().replace('.py','')[0:5]
     recodqm = None
     if 'recodqm' in details:
-      label=cfgname.lower().replace('.py','')[0:5]
       recodqm=details['recodqm']
       driver_command="cmsDriver.py %s " %details['reqtype']+\
                       "-s %s " %recodqm['steps'] +\
@@ -590,8 +590,7 @@ def createCMSSWConfigs(options,confCondDictionary,allRunsAndBlocks):
                    'cfg_path = REFERENCE.py\n' +\
                    'req_name = %s_reference_RelVal_%s\n'%(details['reqtype'],options.run[0]) +\
                    'globaltag = %s\n'%(refgtshort) +\
-                   #'harvest_cfg=step4_reference_HARVESTING.py\n\n'
-                   'harvest_cfg=step4_%s_HARVESTING.py\n\n'%label
+                   'harvest_cfg=step4_refer_HARVESTING.py\n\n' # this is ugly and depends on [0:5]; can't be easliy fixed w/o reorganization
 
   task=2
   print confCondList
